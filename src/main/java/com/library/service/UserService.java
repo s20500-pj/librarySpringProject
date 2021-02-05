@@ -33,9 +33,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(Long id) throws CustomException {
         if(nrOfBooks(id)>0){
-            throw new RuntimeException();
+            throw new CustomException(String.format("The user didnt return his books", id.toString()));
         }
         else {
             userRepository.deleteById(id);
@@ -89,6 +89,10 @@ public class UserService {
 
     public Optional<List<User>> findByName(String name) {
         return userRepository.getUserByName(name);
+    }
+
+    public void deleteAll(){
+        userRepository.deleteAll();
     }
 
 

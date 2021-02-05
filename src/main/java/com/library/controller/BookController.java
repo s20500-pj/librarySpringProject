@@ -2,7 +2,6 @@ package com.library.controller;
 
 import com.library.AdviceErrorHandler.CustomException;
 import com.library.model.Book;
-import com.library.model.User;
 import com.library.service.BookService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

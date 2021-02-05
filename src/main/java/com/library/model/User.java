@@ -15,6 +15,12 @@ public class User {
     @OneToMany
     private List<Book> books;
 
+    public User(Long id, String name, String address) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+    }
+
     public User(String name, String address) {
         this.name = name;
         this.address = address;

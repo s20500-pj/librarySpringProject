@@ -9,13 +9,20 @@ import javax.persistence.Id;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
     private String name;
     private String author;
     private String borrowDate;
     private String returnDate;
     private Long user;
 
+    public Book(Long id, String name, String author) {
+        this.id = id;
+        this.name = name;
+        this.author = author;
+        this.borrowDate = "";
+        this.returnDate = "";
+    }
 
     public Book(String name, String author) {
         this.name = name;
@@ -28,7 +35,7 @@ public class Book {
     }
 
     public Book(Long id, String name, String author, String borrowDate, String returnDate, Long user, boolean isBorrowed) {
-        Id = id;
+        this.id = id;
         this.name = name;
         this.author = author;
         this.borrowDate = borrowDate;
@@ -37,11 +44,11 @@ public class Book {
     }
 
     public Long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(Long id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getName() {
