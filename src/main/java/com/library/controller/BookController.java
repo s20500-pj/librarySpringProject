@@ -1,5 +1,6 @@
 package com.library.controller;
 
+import com.library.AdviceErrorHandler.CustomException;
 import com.library.model.Book;
 import com.library.model.User;
 import com.library.service.BookService;
@@ -29,19 +30,23 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> findById(@PathVariable Long id) {
+    public ResponseEntity<Book> findById(@PathVariable Long id) throws CustomException {
         Optional<Book> byId = bookService.findById(id);
         if (byId.isPresent()) {
             return ResponseEntity.ok(byId.get());
         } else {
-            return ResponseEntity.notFound().build();
+            throw new CustomException(String.format("Book of id: %s doesnt exist", id.toString()));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id){
-        bookService.deleteById(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) throws CustomException{
+        if (bookService.findById(id).isEmpty()) {
+            throw new CustomException(String.format("Book of id: %s doesnt exist", id.toString()));
+        } else {
+            bookService.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
     }
 
     @PostMapping
@@ -54,13 +59,12 @@ public class BookController {
     }
 
     @GetMapping("/findbyname/{name}")
-    public ResponseEntity<List<Book>> findByName(@PathVariable String name){
+    public ResponseEntity<List<Book>> findByName(@PathVariable String name) throws CustomException{
         Optional<List<Book>> books = bookService.findByName(name);
-        if(books.isPresent()) {
+        if (books.isPresent()) {
             return ResponseEntity.ok(books.get());
-        }
-        else {
-            return ResponseEntity.notFound().build();
+        } else {
+            throw new CustomException(String.format("Book not found for name: %s", name));
         }
     }
 }

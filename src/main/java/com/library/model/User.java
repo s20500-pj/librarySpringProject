@@ -15,12 +15,12 @@ public class User {
     @OneToMany
     private List<Book> books;
 
-    public User(String name, String address){
+    public User(String name, String address) {
         this.name = name;
         this.address = address;
     }
 
-    public User(){
+    public User() {
 
     }
 
@@ -56,10 +56,11 @@ public class User {
         this.books = books;
     }
 
-    public void addBook(Book book){
+    public void addBook(Book book) {
         books.add(book);
     }
-    public void remove(Book book){
+
+    public void remove(Book book) {
         books.remove(book);
     }
 }

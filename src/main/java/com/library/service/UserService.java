@@ -1,5 +1,6 @@
 package com.library.service;
 
+import com.library.AdviceErrorHandler.CustomException;
 import com.library.model.Book;
 import com.library.model.User;
 import com.library.repository.BookRepository;
@@ -50,10 +51,15 @@ public class UserService {
         }
     }
 
-    public User addBook(Long userId, Long bookId) {
+    public User addBook(Long userId, Long bookId) throws CustomException {
         if (nrOfBooks(userId) >= 3) {
-            throw new RuntimeException();
-        } else {
+            throw new CustomException("You've reached maximum nr of books(3) you can borrow");
+        }
+        else if(bookRepository.findById(bookId).get().getUser() != null){
+            throw new CustomException(String.format("Book of id: %s is already taken", bookId.toString()));
+
+        }
+        else {
             User byId = findById(userId).get();
             Book book = bookRepository.findById(bookId).get();
             byId.addBook(book);

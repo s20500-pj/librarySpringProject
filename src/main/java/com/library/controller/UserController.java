@@ -1,5 +1,6 @@
 package com.library.controller;
 
+import com.library.AdviceErrorHandler.CustomException;
 import com.library.model.User;
 import com.library.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
-public class UserController {
+public class UserController extends RuntimeException {
 
     private UserService userService;
 
@@ -29,48 +30,69 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id) {
+    public ResponseEntity<User> findById(@PathVariable Long id) throws CustomException {
         Optional<User> byId = userService.findById(id);
         if (byId.isPresent()) {
             return ResponseEntity.ok(byId.get());
         } else {
-            return ResponseEntity.notFound().build();
+            throw new CustomException(String.format("User of id: %s doesnt exist", id.toString()));
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id){
-        userService.deleteById(id);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long userId) throws CustomException {
+        if (userService.findById(userId).isEmpty()) {
+            throw new CustomException(String.format("User of id: %s doesnt exist", userId.toString()));
+        } else {
+            userService.deleteById(userId);
+            return ResponseEntity.ok().build();
+        }
+
     }
 
     @PostMapping
     public ResponseEntity<User> save(@RequestBody User player) {
         return ResponseEntity.ok(userService.save(player));
     }
+
     @PutMapping
     public ResponseEntity<User> update(@RequestBody User player) {
         return ResponseEntity.ok(userService.update(player));
     }
 
     @GetMapping("/addbook/{userId}/{bookId}")
-    public ResponseEntity<User> addBook(@PathVariable Long userId, @PathVariable Long bookId){
-        return ResponseEntity.ok(userService.addBook(userId,bookId));
+    public ResponseEntity<User> addBook(@PathVariable Long userId, @PathVariable Long bookId) throws CustomException {
+        if (userService.findById(userId).isEmpty()) {
+            throw new CustomException(String.format("User of id: %s doesnt exist", userId.toString()));
+        }
+        else if (userService.findById(bookId).isEmpty()) {
+            throw new CustomException(String.format("Book of id: %s doesnt exist", bookId.toString()));
+        }
+        else {
+            return ResponseEntity.ok(userService.addBook(userId, bookId));
+        }
     }
 
     @GetMapping("/removebook/{userId}/{bookId}")
-    public ResponseEntity<User> removeBook(@PathVariable Long userId, @PathVariable Long bookId){
-        return ResponseEntity.ok(userService.removeBook(userId,bookId));
+    public ResponseEntity<User> removeBook(@PathVariable Long userId, @PathVariable Long bookId) throws CustomException {
+        if (userService.findById(userId).isEmpty()) {
+            throw new CustomException(String.format("User of id: %s doesnt exist", userId.toString()));
+        }
+        else if (userService.findById(bookId).isEmpty()) {
+            throw new CustomException(String.format("Book of id: %s doesnt exist", bookId.toString()));
+        }
+        else {
+            return ResponseEntity.ok(userService.removeBook(userId, bookId));
+        }
     }
 
     @GetMapping("/findbyname/{name}")
-    public ResponseEntity<List<User>> findByName(@PathVariable String name){
+    public ResponseEntity<List<User>> findByName(@PathVariable String name) throws CustomException {
         Optional<List<User>> user = userService.findByName(name);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             return ResponseEntity.ok(user.get());
-        }
-        else {
-            return ResponseEntity.notFound().build();
+        } else {
+            throw new CustomException(String.format("User not found for name: %s", name));
         }
     }
 

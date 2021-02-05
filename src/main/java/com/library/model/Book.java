@@ -17,11 +17,10 @@ public class Book {
     private Long user;
 
 
-
     public Book(String name, String author) {
         this.name = name;
         this.author = author;
-        this.borrowDate ="";
+        this.borrowDate = "";
         this.returnDate = "";
     }
 
